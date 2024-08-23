@@ -7,8 +7,12 @@
   // Get the tasks
   const createTask = (task) => {
     let taskElement = document.createElement("div");
-    taskElement.style.border = "3px solid black";
-    taskElement.textContent = task;
+    taskElement.innerHTML = `
+    <div class="task">
+                <p>${task}</p>
+                <button class="taskButton">Edit</button>
+                <button class="taskButton">Remove</button>
+              </div>`;
     return taskElement;
   };
   const appendTask = (tasks, column) => {

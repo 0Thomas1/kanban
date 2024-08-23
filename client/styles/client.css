@@ -1,0 +1,7 @@
+.task:hover > .taskButton {
+  display: inline-block;
+}
+
+.taskButton {
+  display: none;
+}
