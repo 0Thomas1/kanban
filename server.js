@@ -8,7 +8,6 @@ app.use(express.static(root));
 
 MongoDB.connectToMongoDB().then(() => {
   console.log("Connected to MongoDB");
-  
 });
 
 app.get("/", (req, res) => {
