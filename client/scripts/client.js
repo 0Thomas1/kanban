@@ -15,12 +15,16 @@
               </div>`;
     return taskElement;
   };
+
+  // Append the tasks to the columns
   const appendTask = (tasks, column) => {
     for (let task of tasks) {
       let taskElement = createTask(task);
       column.appendChild(taskElement);
     }
   };
+  
+  // Display the boards
   const displayBoards = async () => {
     const boards = await fetch("/api/boards").then((res) => res.json());
     console.log(boards);
