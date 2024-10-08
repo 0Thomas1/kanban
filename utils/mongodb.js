@@ -51,12 +51,23 @@ async function removeFromKanbanBoard(username, column, task) {
     console.error(error);
   }
 }
+//Edit a task from the kanban board
+async function editTask(username, column, task, newTask) {
+  try {
+    const board = await kanban.findOne({ Username: username });
+    board[column] = board[column].map((t) => (t === task ? newTask : t));
+    await kanban.updateOne({ Username: username }, { $set: board });
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 module.exports = {
   connectToMongoDB,
   getKanbanBoards,
   addToKanbanBoard,
   removeFromKanbanBoard,
+  editTask,
   kanban,
   users,
 };
