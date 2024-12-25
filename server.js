@@ -8,9 +8,8 @@ const MongoDB = require("./utils/mongodb.js");
 app.use(express.static(root));
 
 //connect to the MongoDB database
-MongoDB.connectToMongoDB().then(() => {
-  console.log("Connected to MongoDB");
-});
+MongoDB.connectToMongoDB();
+
 
 //serve the index.html file
 app.get("/", (req, res) => {

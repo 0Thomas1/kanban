@@ -16,6 +16,7 @@ async function connectToMongoDB() {
     const database = client.db("Kanban");
     kanban = database.collection("Kanban_Boards");
     users = database.collection("Users");
+    console.log("Connected to MongoDB");
   } catch (error) {
     console.error(error);
   }
