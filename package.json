@@ -11,6 +11,7 @@
   "author": "Thomas Cheng",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "express": "^4.19.2",
     "mongodb": "^6.8.0",

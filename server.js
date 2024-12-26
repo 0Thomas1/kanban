@@ -4,6 +4,8 @@ const port = 3000;
 const root = require("path").join(__dirname, "client");
 const MongoDB = require("./utils/mongodb.js");
 
+//middleware to parse the request body
+app.use(express.json());
 //serve the static files
 app.use(express.static(root));
 
@@ -22,7 +24,15 @@ app.get("/api/boards", (req, res) => {
     res.send(boards);
   });
 });
+//add task to the kanban board
+app.post('/api/addTask', (req, res) => {
 
+  const { task, column } = req.body;
+  console.log(req.body);
+  MongoDB.addTask("thomas", task, column).then((result) => {
+    res.send(result);
+  });
+});
 //start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

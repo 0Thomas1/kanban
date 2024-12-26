@@ -30,4 +30,20 @@ async function getKanbanBoards(userName) {
     console.error(error);
   }
 }
-module.exports = { connectToMongoDB, getKanbanBoards, kanban, users };
+
+async function addTask(userName, task, column) {
+  try {
+    const result = await kanban.updateOne(
+      { Username: userName },
+      {
+        $push: {
+          [column]: task,
+        },
+      }
+    );
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+}
+module.exports = { connectToMongoDB, getKanbanBoards, addTask, kanban, users };
