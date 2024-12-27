@@ -31,15 +31,11 @@ async function getKanbanBoards(userName) {
   }
 }
 
-async function addTask(userName, task, column) {
+async function addTask(task, userName) {
   try {
     const result = await kanban.updateOne(
-      { Username: userName },
-      {
-        $push: {
-          [column]: task,
-        },
-      }
+      { username: userName },
+      { $push: { tasks: task } }
     );
     return result;
   } catch (error) {

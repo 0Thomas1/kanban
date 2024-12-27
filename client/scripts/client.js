@@ -12,17 +12,38 @@
   const createTask = (task,i) => {
     let taskElement = document.createElement("div");
     taskElement.innerHTML = `
-      <div class="card" id="task_${i}" >
+      <div class="card task" id="task_${i}">
         <div class="card-header">
           ${task.taskName}
         </div>
         <div class="card-body">
           ${task.taskDesc}
         </div>
+        <div class="card-footer" style="display: none">
+          <button class="btn btn-primary" >In Progress</button>
+          <button class="btn btn-success" >Done</button>
+          <button class="btn btn-danger" >Delete</button>
+        </div>
       </div>`
+
+    taskElement.addEventListener("mouseover", () => {
+      taskElement.querySelector(".card-footer").style.display = "block";
+    });
+
+    taskElement.addEventListener("mouseout", () => {
+      taskElement.querySelector(".card-footer").style.display = "none";
+    });
 
     return taskElement;
   };
+
+  const taskStatusSelect = document.getElementById("taskStatus");
+  taskStatusSelect.addEventListener("change", (event) => {
+    const newTaskStatus = event.target.value;
+    console.log(taskStatus);
+  });
+
+  // Append the tasks to the board
   const appendTask = (tasks) => {
     for (let i = 0; i < tasks.length; i++) {
       const task = tasks[i];
@@ -32,7 +53,6 @@
   };
   const displayBoards = async () => {
     const boards = await fetch("/api/boards").then((res) => res.json());
-    console.log(boards);
     todo.innerHTML = "";
     inProgress.innerHTML = "";
     done.innerHTML = "";
@@ -48,27 +68,35 @@
   });
 
   async function addTask() {
-    const task = document.getElementById("taskName").value;
-    if(task === "") {
-      document.getElementById("taskName").value = "Please enter a task";
+    const taskName = document.getElementById("taskName").value;
+    const taskDesc = document.getElementById("taskDescription").value;
+    const taskStatus = document.getElementById("taskStatus").value;
+    const task = {
+      "taskName": taskName,
+      "taskDesc": taskDesc,
+      "taskStatus": taskStatus,
+    };
+    console.log(task);
+    if(taskName === "" || taskDesc === ""){
+      alert("Please enter a task name and description");
       return;
     }
-    const column = "Todo";
-
     const request = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ task, column }),
-    }
+      body: JSON.stringify(task),
+    };
 
 
-    await fetch("/api/addTask", request).then(() => {   
+    const res = await fetch("/api/addTask", request);
+    if (res.status === 200) {
       displayBoards();
       document.getElementById("taskName").value = "";
+      document.getElementById("taskDescription").value = "";
       modal.hide();
-    });
+    }
   }
   displayBoards();
 

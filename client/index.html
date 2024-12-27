@@ -25,15 +25,19 @@
           <label for="taskName" class="form-label">Task Name</label>
           <input type="text" class="form-control" id="taskName" aria-describedby="taskName">
         </div>
-        <!-- Not Implemented yet
         <div class="mb-3">
           <label for="taskDescription" class="form-label">Task Description</label>
           <input type="text" class="form-control" id="taskDescription">
         </div>
         <div class="mb-3">
           <label for="taskStatus" class="form-label">Task Status</label>
-          <input type="text" class="form-control" id="taskStatus">
-        </div> -->
+          <select class="form-select" id="taskStatus">
+            <option selected>Choose...</option>
+            <option value="todo">To Do</option>
+            <option value="inProgress">In Progress</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
         <button type="submit" class="btn btn-primary" id="addTask" >Add Task</button>
       </div>
       <div class="modal-footer">

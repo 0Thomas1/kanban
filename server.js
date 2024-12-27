@@ -27,9 +27,9 @@ app.get("/api/boards", (req, res) => {
 //add task to the kanban board
 app.post('/api/addTask', (req, res) => {
 
-  const { task, column } = req.body;
-  console.log(req.body);
-  MongoDB.addTask("thomas", task, column).then((result) => {
+  const task = req.body;
+  console.log(task);
+  MongoDB.addTask(task, 'thomas').then((result) => {
     res.send(result);
   });
 });
