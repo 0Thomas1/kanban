@@ -23,8 +23,8 @@ async function connectToMongoDB() {
 }
 async function getKanbanBoards(userName) {
   try {
-    const boards = await kanban.findOne({ Username: userName });
-
+    const boards = await kanban.findOne({ username: userName });
+    
     return boards;
   } catch (error) {
     console.error(error);

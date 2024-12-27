@@ -9,16 +9,25 @@
 
   
   // Get the tasks
-  const createTask = (task) => {
+  const createTask = (task,i) => {
     let taskElement = document.createElement("div");
-    taskElement.style.border = "3px solid black";
-    taskElement.textContent = task;
+    taskElement.innerHTML = `
+      <div class="card" id="task_${i}" >
+        <div class="card-header">
+          ${task.taskName}
+        </div>
+        <div class="card-body">
+          ${task.taskDesc}
+        </div>
+      </div>`
+
     return taskElement;
   };
-  const appendTask = (tasks, column) => {
-    for (let task of tasks) {
-      let taskElement = createTask(task);
-      column.appendChild(taskElement);
+  const appendTask = (tasks) => {
+    for (let i = 0; i < tasks.length; i++) {
+      const task = tasks[i];
+      let taskElement = createTask(task,i);
+      document.getElementById(task.taskStatus).appendChild(taskElement);
     }
   };
   const displayBoards = async () => {
@@ -27,15 +36,10 @@
     todo.innerHTML = "";
     inProgress.innerHTML = "";
     done.innerHTML = "";
-    appendTask(boards.Todo, todo);
-    appendTask(boards.In_Progress, inProgress);
-    appendTask(boards.Done, done);
+    const tasks = boards.tasks;
+    appendTask(tasks);
+   
   };
-
-  function setColumn(event) {
-    column = event.target.id;
-    console.log(column);
-  }
   
   // Add a task to the board
   taskForm.addEventListener("submit", async (event) => {
