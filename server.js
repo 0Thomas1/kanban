@@ -3,7 +3,7 @@ const app = express();
 const port = 3000;
 const root = require("path").join(__dirname, "client");
 const MongoDB = require("./utils/mongodb.js");
-
+const userName = "thomas test";
 //middleware to parse the request body
 app.use(express.json());
 //serve the static files
@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
 
 //get the kanban boards for the user
 app.get("/api/boards", (req, res) => {
-  MongoDB.getKanbanBoards("thomas").then((boards) => {
+  MongoDB.getKanbanBoards(userName).then((boards) => {
     res.send(boards);
   });
 });
@@ -29,7 +29,7 @@ app.post('/api/addTask', (req, res) => {
 
   const task = req.body;
   console.log(task);
-  MongoDB.addTask(task, 'thomas').then((result) => {
+  MongoDB.addTask(task, userName).then((result) => {
     res.send(result);
   });
 });

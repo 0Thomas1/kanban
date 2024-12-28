@@ -9,10 +9,10 @@
 
   
   // Get the tasks
-  const createTask = (task,i) => {
+  const createTask = (task) => {
     let taskElement = document.createElement("div");
     taskElement.innerHTML = `
-      <div class="card task" id="task_${i}">
+      <div class="card task" id="${task.id}">
         <div class="card-header">
           ${task.taskName}
         </div>
@@ -45,9 +45,8 @@
 
   // Append the tasks to the board
   const appendTask = (tasks) => {
-    for (let i = 0; i < tasks.length; i++) {
-      const task = tasks[i];
-      let taskElement = createTask(task,i);
+    for (task of tasks) {
+      let taskElement = createTask(task);
       document.getElementById(task.taskStatus).appendChild(taskElement);
     }
   };

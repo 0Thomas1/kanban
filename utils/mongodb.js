@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = process.env.MONGODB_URI;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -30,12 +30,13 @@ async function getKanbanBoards(userName) {
     console.error(error);
   }
 }
-
+// Add a task to the kanban board
 async function addTask(task, userName) {
   try {
+    const taskWithId = { ...task, id: new ObjectId() };
     const result = await kanban.updateOne(
       { username: userName },
-      { $push: { tasks: task } }
+      { $push: { tasks: taskWithId } }
     );
     return result;
   } catch (error) {
