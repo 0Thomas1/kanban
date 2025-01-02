@@ -33,6 +33,18 @@ app.post('/api/addTask', (req, res) => {
     res.send(result);
   });
 });
+
+//change the status of the task
+app.put('/api/changeTaskStatus', (req, res) => {
+  console.log(req.body);
+  const taskId = req.body.taskId;
+  const newStatus = req.body.newStatus;
+  MongoDB.changeTaskStatus(taskId, newStatus, userName).then((result) => {
+    console.log(result);
+    res.send(result);
+  });
+});
+
 //start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

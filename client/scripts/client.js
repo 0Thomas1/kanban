@@ -20,9 +20,9 @@
           ${task.taskDesc}
         </div>
         <div class="card-footer" style="display: none">
-          <button class="btn btn-primary" >In Progress</button>
-          <button class="btn btn-success" >Done</button>
-          <button class="btn btn-danger" >Delete</button>
+          <button class="btn btn-primary" id="inProgressBtn" >In Progress</button>
+          <button class="btn btn-success" id="doneBtn" >Done</button>
+          <button class="btn btn-danger"  id ="delete">Delete</button>
         </div>
       </div>`
 
@@ -38,10 +38,8 @@
   };
 
   const taskStatusSelect = document.getElementById("taskStatus");
-  taskStatusSelect.addEventListener("change", (event) => {
-    const newTaskStatus = event.target.value;
-    console.log(taskStatus);
-  });
+
+
 
   // Append the tasks to the board
   const appendTask = (tasks) => {
@@ -97,5 +95,46 @@
       modal.hide();
     }
   }
+
+  // Change the status of the task
+  document.addEventListener("click", async (event) => {
+    let taskId;
+    let newStatus;
+    if (event.target.id === "inProgressBtn") {
+      console.log("inProgress clicked");
+       taskId = event.target.parentElement.parentElement.id;
+      newStatus = "inProgress";
+    }
+    if (event.target.id === "doneBtn") {
+      console.log("done clicked");
+       taskId = event.target.parentElement.parentElement.id;
+      
+      newStatus = "done";
+    }
+    if (event.target.id === "delete") {
+      return;
+    }
+    if (newStatus) {
+      const request = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          taskId: taskId,
+          newStatus: newStatus,
+        }),
+      };
+      const res = await fetch("/api/changeTaskStatus", request);
+      
+      if (res.status === 200) {
+        displayBoards();
+      }
+      else {
+        console.log("Error");
+      }
+    }
+  });
+ 
   displayBoards();
 

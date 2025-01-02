@@ -30,10 +30,15 @@ async function getKanbanBoards(userName) {
     console.error(error);
   }
 }
+
 // Add a task to the kanban board
 async function addTask(task, userName) {
   try {
-    const taskWithId = { ...task, id: new ObjectId() };
+    const taskWithId = { ...task, 
+      id: new ObjectId(),
+      createdAt: new Date(),
+      updatedAt: new Date() 
+    };
     const result = await kanban.updateOne(
       { username: userName },
       { $push: { tasks: taskWithId } }
@@ -43,4 +48,19 @@ async function addTask(task, userName) {
     console.error(error);
   }
 }
-module.exports = { connectToMongoDB, getKanbanBoards, addTask, kanban, users };
+//change the status of the task
+async function changeTaskStatus(taskId, newStatus, userName) {
+  try {
+    
+    const result = await kanban.updateOne(
+      { username: userName},
+      { $set: { "tasks.$[task].taskStatus": newStatus } },
+      { arrayFilters: [{ "task.id": ObjectId.createFromHexString(taskId) }] }
+    );
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+module.exports = { connectToMongoDB, getKanbanBoards, addTask, changeTaskStatus, kanban, users };
