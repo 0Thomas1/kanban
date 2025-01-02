@@ -8,7 +8,7 @@
   const modal = new bootstrap.Modal(document.getElementById("staticBackdrop"));
 
   
-  // Get the tasks
+  // Create the tasks
   const createTask = (task) => {
     let taskElement = document.createElement("div");
     taskElement.innerHTML = `
