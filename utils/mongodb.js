@@ -63,4 +63,16 @@ async function changeTaskStatus(taskId, newStatus, userName) {
   }
 }
 
-module.exports = { connectToMongoDB, getKanbanBoards, addTask, changeTaskStatus, kanban, users };
+//delete a task
+async function deleteTask(taskId, userName) {
+  try {
+    const result = await kanban.updateOne(
+      { username: userName },
+      { $pull: { tasks: { id: ObjectId.createFromHexString(taskId) } } }
+    );
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+}
+module.exports = { connectToMongoDB, getKanbanBoards, addTask, changeTaskStatus, deleteTask, kanban, users };

@@ -112,7 +112,24 @@
       newStatus = "done";
     }
     if (event.target.id === "delete") {
-      return;
+      console.log("delete clicked");
+       taskId = event.target.parentElement.parentElement.id;
+      const request = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          taskId: taskId,
+        }),
+      };
+      const res = await fetch("/api/deleteTask", request);
+      if (res.status === 200) {
+        displayBoards();
+      }
+      else {
+        console.log("Error");
+      } 
     }
     if (newStatus) {
       const request = {
