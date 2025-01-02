@@ -6,6 +6,7 @@ let client;
 let kanban;
 let users;
 
+// Connect to the MongoDB database
 async function connectToMongoDB() {
   try {
     //single connection to the database
