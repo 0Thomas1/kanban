@@ -12,7 +12,7 @@
   const createTask = (task) => {
     let taskElement = document.createElement("div");
     taskElement.innerHTML = `
-      <div class="card task" id="${task.id}">
+      <div class="card task my-2" id="${task.id}">
         <div class="card-header">
           ${task.taskName}
         </div>
