@@ -57,14 +57,15 @@ app.post("/api/addTask", async (req, res) => {
 });
 
 //change the status of the task
-app.put("/api/changeTaskStatus", (req, res) => {
-  console.log(req.body);
+app.put("/api/changeTaskStatus", async (req, res) => {
   const taskId = req.body.taskId;
   const newStatus = req.body.newStatus;
-  MongoDB.changeTaskStatus(taskId, newStatus, userName).then((result) => {
-    console.log(result);
-    res.send(result);
-  });
+  const task = await Task.findById(taskId);
+  console.log(task);
+  task.taskStatus = newStatus;
+  task.updatedAt = new Date();
+  await task.save();
+  res.send(task);
 });
 
 //delete the task
