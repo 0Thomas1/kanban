@@ -86,9 +86,8 @@ async function addTask() {
     body: JSON.stringify(task),
   };
 
-
   const res = await fetch("/api/addTask", request);
-  if (res) {
+  if (res.status != 500) {
     displayBoards();
     document.getElementById("taskName").value = "";
     document.getElementById("taskDescription").value = "";
@@ -144,7 +143,7 @@ document.addEventListener("click", async (event) => {
     };
     const res = await fetch("/api/changeTaskStatus", request);
 
-    if (res.status === 200) {
+    if (res) {
       displayBoards();
     }
     else {

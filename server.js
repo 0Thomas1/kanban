@@ -31,23 +31,29 @@ app.get("/api/boards", async (req, res) => {
 //add task to the kanban board
 app.post("/api/addTask", async (req, res) => {
   const task = req.body;
-  const newTask = await Task.create({
-    title: task.taskName,
-    description: task.taskDesc,
-    taskStatus: task.taskStatus,
-  });
-  console.log("adding task\n", newTask);
-
-  const user = await User.findOne({
-    username: userName,
-  });
-
-  newTask.user = user;
-  await newTask.save();
-  user.tasks.push(newTask);
-  await user.save();
+  try{
+    const newTask = await Task.create({
+      title: task.taskName,
+      description: task.taskDesc,
+      taskStatus: task.taskStatus,
+    });
+    console.log("adding task\n", newTask);
   
-  res.send(await newTask.populate("user"));
+    const user = await User.findOne({
+      username: userName,
+    });
+  
+    newTask.user = user;
+    await newTask.save();
+    user.tasks.push(newTask);
+    await user.save();
+    
+    res.send(await newTask.populate("user"));
+  }
+  catch(e){
+    res.status(500).send({message: "Error adding task", e});
+  }
+  
 });
 
 //change the status of the task
