@@ -1,16 +1,15 @@
 const mongoose = require("mongoose");
-const Task = require("./Task");
+
 
 
 const userSchema = new mongoose.Schema({
-  _id: {
-    type: mongoose.Schema.Types.ObjectId,
-    default: () => new mongoose.Types.ObjectId(),
-  },
   username: String,
   email: String,
   password: String,
-  tasks: [Task.schema],
+  tasks: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Task",
+  }],
   createdAt: {
     type: Date,
     immutable: true,

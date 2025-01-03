@@ -4,6 +4,8 @@ const port = 3000;
 const root = require("path").join(__dirname, "client");
 const MongoDB = require("./utils/mongodb.js");
 const userName = "thomas";
+const User = require("./utils/User.js");
+const Task = require("./utils/Task.js");
 
 //middleware to parse the request body
 app.use(express.json());
@@ -20,18 +22,32 @@ app.get("/", (req, res) => {
 });
 
 //get the kanban boards for the user
- app.get("/api/boards", async (req, res) => {
+app.get("/api/boards", async (req, res) => {
   const user = await User.findOne({ username: userName });
-  res.send(user.tasks);
+  const tasks = await Task.find({ user: user });
+  res.send(tasks);
 });
 
 //add task to the kanban board
-app.post("/api/addTask", (req, res) => {
+app.post("/api/addTask", async (req, res) => {
   const task = req.body;
-  console.log(task);
-  MongoDB.addTask(task, userName).then((result) => {
-    res.send(result);
+  const newTask = await Task.create({
+    title: task.taskName,
+    description: task.taskDesc,
+    taskStatus: task.taskStatus,
   });
+  console.log("adding task\n", newTask);
+
+  const user = await User.findOne({
+    username: userName,
+  });
+
+  newTask.user = user;
+  await newTask.save();
+  user.tasks.push(newTask);
+  await user.save();
+  
+  res.send(await newTask.populate("user"));
 });
 
 //change the status of the task
@@ -64,8 +80,4 @@ app.listen(port, () => {
 const mongoose = require("mongoose");
 const uri = process.env.MONGODB_URI;
 mongoose.connect(uri);
-
-const User = require("./utils/User");
-const Task = require("./utils/Task");
-
 

@@ -88,7 +88,7 @@ async function addTask() {
 
 
   const res = await fetch("/api/addTask", request);
-  if (res.status === 200) {
+  if (res) {
     displayBoards();
     document.getElementById("taskName").value = "";
     document.getElementById("taskDescription").value = "";
