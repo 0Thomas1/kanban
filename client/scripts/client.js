@@ -115,7 +115,7 @@ document.addEventListener("click", async (event) => {
     console.log("delete clicked");
     taskId = event.target.parentElement.parentElement.id;
     const request = {
-      method: "PUT",
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },

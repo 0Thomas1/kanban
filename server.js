@@ -48,7 +48,7 @@ app.put('/api/changeTaskStatus', (req, res) => {
 });
 
 //delete the task
-app.put('/api/deleteTask', (req, res) => {
+app.delete('/api/deleteTask', (req, res) => {
   console.log(req.body);
   const taskId = req.body.taskId;
   MongoDB.deleteTask(taskId, userName).then((result) => {
@@ -56,6 +56,14 @@ app.put('/api/deleteTask', (req, res) => {
     res.send(result);
   });
 });
+
+app.post('/api/register', (req, res) => {
+  const user = req.body;
+  MongoDB.registerUser(user).then((result) => {
+    res.send(result);
+  });
+});
+
 
 //start the server
 app.listen(port, () => {

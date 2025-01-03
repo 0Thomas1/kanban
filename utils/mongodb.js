@@ -77,4 +77,15 @@ async function deleteTask(taskId, userName) {
     console.error(error);
   }
 }
+
+
+//register a user
+async function registerUser(user) {
+  try {
+    const result = await users.insertOne(user);
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+}
 module.exports = { connectToMongoDB, getKanbanBoards, addTask, changeTaskStatus, deleteTask, kanban, users };
