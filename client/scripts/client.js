@@ -12,12 +12,12 @@ const modal = new bootstrap.Modal(document.getElementById("staticBackdrop"));
 const createTask = (task) => {
   let taskElement = document.createElement("div");
   taskElement.innerHTML = `
-      <div class="card task my-2" id="${task.id}">
+      <div class="card task my-2" id="${task._id}">
         <div class="card-header">
-          ${task.taskName}
+          ${task.title}
         </div>
         <div class="card-body">
-          ${task.taskDesc}
+          ${task.description}
         </div>
         <div class="card-footer" style="display: none">
           <button class="btn btn-primary" id="inProgressBtn" >In Progress</button>
@@ -43,17 +43,17 @@ const taskStatusSelect = document.getElementById("taskStatus");
 
 // Append the tasks to the board
 const appendTask = (tasks) => {
-  for (task of tasks) {
+  for (let task of tasks) {
+    console.log(task);
     let taskElement = createTask(task);
     document.getElementById(task.taskStatus).appendChild(taskElement);
   }
 };
 const displayBoards = async () => {
-  const boards = await fetch("/api/boards").then((res) => res.json());
+  const tasks = await fetch("/api/boards").then((res) => res.json());
   todo.innerHTML = "";
   inProgress.innerHTML = "";
   done.innerHTML = "";
-  const tasks = boards.tasks;
   appendTask(tasks);
 
 };
@@ -86,9 +86,8 @@ async function addTask() {
     body: JSON.stringify(task),
   };
 
-
   const res = await fetch("/api/addTask", request);
-  if (res.status === 200) {
+  if (res.status != 500) {
     displayBoards();
     document.getElementById("taskName").value = "";
     document.getElementById("taskDescription").value = "";
@@ -114,44 +113,56 @@ document.addEventListener("click", async (event) => {
   if (event.target.id === "delete") {
     console.log("delete clicked");
     taskId = event.target.parentElement.parentElement.id;
-    const request = {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        taskId: taskId,
-      }),
-    };
-    const res = await fetch("/api/deleteTask", request);
-    if (res.status === 200) {
-      displayBoards();
-    }
-    else {
-      console.log("Error");
-    }
+    await deleteTask(taskId);
   }
   if (newStatus) {
-    const request = {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        taskId: taskId,
-        newStatus: newStatus,
-      }),
-    };
-    const res = await fetch("/api/changeTaskStatus", request);
-
-    if (res.status === 200) {
-      displayBoards();
-    }
-    else {
-      console.log("Error");
-    }
+    await changeTaskStatus(taskId, newStatus);
   }
 });
 
+// Delete the task
+async function deleteTask(taskId) {
+  const request = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      taskId: taskId,
+    }),
+  };
+  const res = await fetch("/api/deleteTask", request);
+  if (res.status === 200) {
+    console.log("Task deleted");
+    displayBoards();
+  }
+  else {
+    console.log(res);
+  }
+}
+
+//change task status
+async function changeTaskStatus(taskId, newStatus) {
+  const request = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      taskId: taskId,
+      newStatus: newStatus,
+    }),
+  };
+  const res = await fetch("/api/changeTaskStatus", request);
+  if (res.status === 200) {
+    console.log("Task status changed");
+    displayBoards();
+  }
+  else {
+    console.log(res);
+  }
+}
+
+// Display the boards
 displayBoards();
 
