@@ -1,12 +1,19 @@
-
-
 // Get the elements
 let todo = document.getElementById("todo");
 let inProgress = document.getElementById("inProgress");
 let done = document.getElementById("done");
+let activeUsername;
 const taskForm = document.getElementById("taskForm");
-const modal = new bootstrap.Modal(document.getElementById("staticBackdrop"));
-
+const regForm = document.getElementById("registerForm");
+const loginForm = document.getElementById("loginForm");
+const addTaskModal = new bootstrap.Modal(
+  document.getElementById("addTaskModal")
+);
+const registerModal = new bootstrap.Modal(
+  document.getElementById("registerModal")
+);
+const loginModal = new bootstrap.Modal(document.getElementById("loginModal"));
+const logoutModal = new bootstrap.Modal(document.getElementById("logoutModal"));
 
 // Create the tasks
 const createTask = (task) => {
@@ -24,7 +31,7 @@ const createTask = (task) => {
           <button class="btn btn-success" id="doneBtn" >Done</button>
           <button class="btn btn-danger"  id ="delete">Delete</button>
         </div>
-      </div>`
+      </div>`;
 
   taskElement.addEventListener("mouseover", () => {
     taskElement.querySelector(".card-footer").style.display = "block";
@@ -39,8 +46,6 @@ const createTask = (task) => {
 
 const taskStatusSelect = document.getElementById("taskStatus");
 
-
-
 // Append the tasks to the board
 const appendTask = (tasks) => {
   for (let task of tasks) {
@@ -50,12 +55,14 @@ const appendTask = (tasks) => {
   }
 };
 const displayBoards = async () => {
-  const tasks = await fetch("/api/boards").then((res) => res.json());
   todo.innerHTML = "";
   inProgress.innerHTML = "";
   done.innerHTML = "";
-  appendTask(tasks);
+  if (activeUsername) {
+    const tasks = await fetch("/api/boards").then((res) => res.json());
 
+    appendTask(tasks);
+  }
 };
 
 // Add a task to the board
@@ -69,9 +76,9 @@ async function addTask() {
   const taskDesc = document.getElementById("taskDescription").value;
   const taskStatus = document.getElementById("taskStatus").value;
   const task = {
-    "taskName": taskName,
-    "taskDesc": taskDesc,
-    "taskStatus": taskStatus,
+    taskName: taskName,
+    taskDesc: taskDesc,
+    taskStatus: taskStatus,
   };
   console.log(task);
   if (taskName === "" || taskDesc === "") {
@@ -91,7 +98,7 @@ async function addTask() {
     displayBoards();
     document.getElementById("taskName").value = "";
     document.getElementById("taskDescription").value = "";
-    modal.hide();
+    addTaskModal.hide();
   }
 }
 
@@ -135,8 +142,7 @@ async function deleteTask(taskId) {
   if (res.status === 200) {
     console.log("Task deleted");
     displayBoards();
-  }
-  else {
+  } else {
     console.log(res);
   }
 }
@@ -157,12 +163,111 @@ async function changeTaskStatus(taskId, newStatus) {
   if (res.status === 200) {
     console.log("Task status changed");
     displayBoards();
-  }
-  else {
+  } else {
     console.log(res);
   }
 }
 
-// Display the boards
-displayBoards();
+const registerUser = async function () {
+  const username = document.getElementById("regUsername").value;
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
+  const confirmPassword = document.getElementById("regConfirmPassword").value;
+  if (password !== confirmPassword) {
+    alert("Passwords do not match");
+    return;
+  }
+  const user = {
+    username: username,
+    email: email,
+    password: password,
+  };
+  const request = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(user),
+  };
+  const res = await fetch("/api/register", request);
+  if (res.status === 200) {
+    console.log("User registered");
+    for (let input of regForm.querySelectorAll("input")) {
+      input.value = "";
+    }
+    registerModal.hide();
+    loginModal.show();
+  } else {
+    alert("Error registering user", res.e);
+  }
+};
+regForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  await registerUser();
+});
 
+function showWelcome() {
+  document.getElementById("welcomeMessage").textContent =
+    "Welcome " + activeUsername + "!";
+  document.getElementById("loginBtn").style.display = "none";
+  document.getElementById("logoutBtn").style.display = "Block";
+}
+
+const loginUser = async function () {
+  const username = document.getElementById("loginUsername").value;
+  const password = document.getElementById("loginPassword").value;
+  const user = {
+    username: username,
+    password: password,
+  };
+  const request = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(user),
+  };
+  const res = await fetch("/api/login", request);
+  if (res.status === 200) {
+    console.log("Login successful");
+    for (let input of loginForm.querySelectorAll("input")) {
+      input.value = "";
+    }
+    loginModal.hide();
+    activeUsername = username;
+
+    displayBoards();
+    showWelcome();
+  } else {
+    const data = await res.json();
+    console.log("Login failed");
+    alert(data.message);
+  }
+};
+
+// Logout the user
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  await loginUser();
+});
+
+// Logout the user
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  logoutModal.show();
+});
+
+document.getElementById("logout").addEventListener("click", async () => {
+  const res = await fetch("/api/logout");
+  console.log(res);
+  if (res.status === 200) {
+    console.log("Logout successful");
+    document.getElementById("welcomeMessage").textContent = "";
+    document.getElementById("loginBtn").style.display = "block";
+    document.getElementById("logoutBtn").style.display = "none";
+    activeUsername = "";
+    displayBoards();
+  } else {
+    console.log("Error logging out");
+  }
+  logoutModal.hide();
+});
