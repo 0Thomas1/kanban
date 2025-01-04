@@ -211,7 +211,7 @@ regForm.addEventListener("submit", async (event) => {
 });
 
 function showWelcome() {
-  document.getElementById("welcomeMessage").innerHTML = "Welcome " + activeUsername;
+  document.getElementById("welcomeMessage").textContent = "Welcome " + activeUsername+"!";
   document.getElementById("loginBtn").style.display = "none";
   document.getElementById("logoutBtn").style.display = "Block";
 }
