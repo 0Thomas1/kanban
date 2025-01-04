@@ -19,7 +19,6 @@ async function registerUser(username, email, password) {
     await newUser.save();
     console.log("User created\n", newUser);
     return newUser;
-
   });
 }
 
@@ -28,15 +27,15 @@ async function loginUser(username, password) {
     username: username,
   });
   if (!user) {
-    throw new Error("Username not found");
+    return { message: "User not found", auth: false };
   }
-  bcrypt.compare(password, user.password, function (err, result) {
-    if (result) {
-      console.log("Login successful");
-    } else {
-      throw new Error("Incorrect password");
-    }
-  });
+  const result = await bcrypt.compare(password, user.password);
+  if (result) {
+    console.log("Login successful");
+    return { message: "Login successful", auth: true };
+  } else {
+    return { message: "Incorrect password", auth: false };
+  }
 }
 
 module.exports = {

@@ -200,6 +200,41 @@
       </div>
     </div>
 
+    <!-- logout Modal -->
+    <div
+      class="modal fade"
+      id="logoutModal"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="logoutModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="logoutModalLabel">Logout</h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to logout?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              Close
+            </button>
+            <button type="button" class="btn btn-primary" id="logout">
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="container">
       <h1 class="text-center">Kanban Board</h1>
       <div class="d-flex justify-content-end" >
@@ -274,6 +309,7 @@
               <div class="card-header">To Do</div>
               <div class="card-body boards" id="todo">
                 <!-- Add your tasks here -->
+                 <p class="text-secondary">Login to start</p>
               </div>
             </div>
             <button
