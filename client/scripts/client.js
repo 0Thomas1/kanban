@@ -113,45 +113,56 @@ document.addEventListener("click", async (event) => {
   if (event.target.id === "delete") {
     console.log("delete clicked");
     taskId = event.target.parentElement.parentElement.id;
-    const request = {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        taskId: taskId,
-      }),
-    };
-    const res = await fetch("/api/deleteTask", request);
-    if (res.status === 200) {
-      console.log("Task deleted");
-      displayBoards();
-    }
-    else {
-      console.log(res);
-    }
+    await deleteTask(taskId);
   }
   if (newStatus) {
-    const request = {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        taskId: taskId,
-        newStatus: newStatus,
-      }),
-    };
-    const res = await fetch("/api/changeTaskStatus", request);
-
-    if (res) {
-      displayBoards();
-    }
-    else {
-      console.log("Error");
-    }
+    await changeTaskStatus(taskId, newStatus);
   }
 });
 
+// Delete the task
+async function deleteTask(taskId) {
+  const request = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      taskId: taskId,
+    }),
+  };
+  const res = await fetch("/api/deleteTask", request);
+  if (res.status === 200) {
+    console.log("Task deleted");
+    displayBoards();
+  }
+  else {
+    console.log(res);
+  }
+}
+
+//change task status
+async function changeTaskStatus(taskId, newStatus) {
+  const request = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      taskId: taskId,
+      newStatus: newStatus,
+    }),
+  };
+  const res = await fetch("/api/changeTaskStatus", request);
+  if (res.status === 200) {
+    console.log("Task status changed");
+    displayBoards();
+  }
+  else {
+    console.log(res);
+  }
+}
+
+// Display the boards
 displayBoards();
 
