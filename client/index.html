@@ -202,14 +202,26 @@
 
     <div class="container">
       <h1 class="text-center">Kanban Board</h1>
-      <div class="d-flex justify-content-end">
+      <div class="d-flex justify-content-end" >
+        <span class="text-primary" id="welcomeMessage"></span>
         <button
           type="button"
           class="btn btn-primary"
           data-bs-toggle="modal"
           data-bs-target="#loginModal"
+          id="loginBtn"
         >
           Login
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#logoutModal"
+          style="display: none;"
+          id="logoutBtn"
+        >
+          Logout
         </button>
         
       </div>
@@ -268,7 +280,7 @@
               type="button"
               class="btn btn-primary"
               data-bs-toggle="modal"
-              data-bs-target="#staticBackdrop"
+              data-bs-target="#addTaskModal"
             >
               Add Task
             </button>

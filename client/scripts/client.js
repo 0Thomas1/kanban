@@ -4,6 +4,7 @@
 let todo = document.getElementById("todo");
 let inProgress = document.getElementById("inProgress");
 let done = document.getElementById("done");
+let activeUsername;
 const taskForm = document.getElementById("taskForm");
 const regForm = document.getElementById("registerForm");
 const loginForm = document.getElementById("loginForm");
@@ -66,6 +67,7 @@ taskForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   addTask();
 });
+
 
 async function addTask() {
   const taskName = document.getElementById("taskName").value;
@@ -167,6 +169,7 @@ async function changeTaskStatus(taskId, newStatus) {
 }
 
 
+
 const registerUser = async function () {
   const username = document.getElementById("regUsername").value;
   const email = document.getElementById("regEmail").value;
@@ -205,6 +208,46 @@ const registerUser = async function () {
 regForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   await registerUser();
+});
+
+function showWelcome() {
+  document.getElementById("welcomeMessage").innerHTML = "Welcome " + activeUsername;
+  document.getElementById("loginBtn").style.display = "none";
+  document.getElementById("logoutBtn").style.display = "Block";
+}
+
+const loginUser = async function () {
+  const username = document.getElementById("loginUsername").value;
+  const password = document.getElementById("loginPassword").value;
+  const user = {
+    "username": username,
+    "password": password,
+  };
+  const request = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(user),
+  };
+  const res = await fetch("/api/login", request);
+  if (res.status === 200) {
+    console.log("Login successful");
+    for (let input of loginForm.querySelectorAll("input")) {
+      input.value = "";
+    }
+    loginModal.hide();
+    displayBoards();
+    activeUsername = username;
+    showWelcome();
+  }
+  else {
+    alert("Error logging in",res.e);
+  }
+}
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  await loginUser();
 });
 
 // Display the boards

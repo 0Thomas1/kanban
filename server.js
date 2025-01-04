@@ -111,13 +111,26 @@ app.post("/api/register", async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   try {
-    const newUser = await UserModel.registerUser(username, email, password);
-    console.log("User registered:\n",newUser);
+    await UserModel.registerUser(username, email, password);
     res.send({ message: "User registered"});
   } catch (e) {
     res.status(500).send({ message: "Error registering user", e });
   }
 });
+
+//login the user
+app.post("/api/login", async (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+  try {
+    await UserModel.loginUser(username, password);
+    activeUsername = username;
+    res.send({ message: "Login successful" });
+  } catch (e) {
+    res.status(500).send({ message: "Error logging in", e });
+  }
+});
+
 //start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
