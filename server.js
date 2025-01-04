@@ -31,51 +31,69 @@ app.get("/api/boards", async (req, res) => {
 //add task to the kanban board
 app.post("/api/addTask", async (req, res) => {
   const task = req.body;
-  try{
+  try {
     const newTask = await Task.create({
       title: task.taskName,
       description: task.taskDesc,
       taskStatus: task.taskStatus,
     });
     console.log("adding task\n", newTask);
-  
+
     const user = await User.findOne({
       username: userName,
     });
-  
+
     newTask.user = user;
     await newTask.save();
     user.tasks.push(newTask);
     await user.save();
-    
+
     res.send(await newTask.populate("user"));
+  } catch (e) {
+    res.status(500).send({ message: "Error adding task", e });
   }
-  catch(e){
-    res.status(500).send({message: "Error adding task", e});
-  }
-  
 });
 
 //change the status of the task
 app.put("/api/changeTaskStatus", async (req, res) => {
-  const taskId = req.body.taskId;
-  const newStatus = req.body.newStatus;
-  const task = await Task.findById(taskId);
-  console.log(task);
-  task.taskStatus = newStatus;
-  task.updatedAt = new Date();
-  await task.save();
-  res.send(task);
+  try {
+    const taskId = req.body.taskId;
+    const newStatus = req.body.newStatus;
+    const task = await Task.findById(taskId);
+    if (task) {
+      console.log("Changing status:\n", task);
+
+      task.taskStatus = newStatus;
+      await task.save();
+      res.send(task);
+    } else {
+      res.status(404).send({ message: "Task not found" });
+    }
+  } catch (e) {
+    res.status(500).send({ message: "Error changing task status", e });
+  }
 });
 
 //delete the task
-app.put("/api/deleteTask", (req, res) => {
-  console.log(req.body);
+app.put("/api/deleteTask", async (req, res) => {
   const taskId = req.body.taskId;
-  MongoDB.deleteTask(taskId, userName).then((result) => {
-    console.log(result);
-    res.send(result);
-  });
+  try {
+    const task = await Task.findById(taskId);
+    
+
+    if (task) {
+      console.log("Deleting task:\n", task);
+      
+      await task.removeSelf();
+      res.send({ message: "Task deleted" });
+    } else {
+      res.status(404).send({ message: "Task not found" });
+    }
+  } 
+  catch (e) {
+    console.log(e);
+    res.status(500).send({ message: "Error deleting task", e });
+  }
 });
 
 //start the server
@@ -87,4 +105,3 @@ app.listen(port, () => {
 const mongoose = require("mongoose");
 const uri = process.env.MONGODB_URI;
 mongoose.connect(uri);
-

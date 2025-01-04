@@ -124,10 +124,11 @@ document.addEventListener("click", async (event) => {
     };
     const res = await fetch("/api/deleteTask", request);
     if (res.status === 200) {
+      console.log("Task deleted");
       displayBoards();
     }
     else {
-      console.log("Error");
+      console.log(res);
     }
   }
   if (newStatus) {
