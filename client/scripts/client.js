@@ -5,8 +5,11 @@ let todo = document.getElementById("todo");
 let inProgress = document.getElementById("inProgress");
 let done = document.getElementById("done");
 const taskForm = document.getElementById("taskForm");
-const modal = new bootstrap.Modal(document.getElementById("staticBackdrop"));
-
+const regForm = document.getElementById("registerForm");
+const loginForm = document.getElementById("loginForm");
+const addTaskModal = new bootstrap.Modal(document.getElementById("addTaskModal"));
+const registerModal = new bootstrap.Modal(document.getElementById("registerModal"));
+const loginModal = new bootstrap.Modal(document.getElementById("loginModal"));
 
 // Create the tasks
 const createTask = (task) => {
@@ -91,7 +94,7 @@ async function addTask() {
     displayBoards();
     document.getElementById("taskName").value = "";
     document.getElementById("taskDescription").value = "";
-    modal.hide();
+    addTaskModal.hide();
   }
 }
 
@@ -162,6 +165,47 @@ async function changeTaskStatus(taskId, newStatus) {
     console.log(res);
   }
 }
+
+
+const registerUser = async function () {
+  const username = document.getElementById("regUsername").value;
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
+  const confirmPassword = document.getElementById("regConfirmPassword").value;
+  if (password !== confirmPassword) {
+    alert("Passwords do not match");
+    return;
+  }
+  const user = {
+    "username": username,
+    "email": email,
+    "password": password,
+  };
+  const request = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(user),
+  };
+  const res = await fetch("/api/register", request);
+  if (res.status === 200) {
+    console.log("User registered");
+    for (let input of regForm.querySelectorAll("input")) {
+      input.value = "";
+    }
+    registerModal.hide();
+    loginModal.show();
+
+  }
+  else {
+    alert("Error registering user",res.e);
+  }
+}
+regForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  await registerUser();
+});
 
 // Display the boards
 displayBoards();

@@ -2,9 +2,21 @@ const express = require("express");
 const app = express();
 const port = 3000;
 const root = require("path").join(__dirname, "client");
-const userName = "thomas";
+let activeUsername = "thomas";
 const User = require("./utils/User.js");
 const Task = require("./utils/Task.js");
+const UserModel = require("./utils/UserModel.js");
+////MONGOOSE TERRITORY
+const mongoose = require("mongoose");
+const uri = process.env.MONGODB_URI;
+const options = {
+  dbName: "kanban",
+ 
+};
+mongoose.connect(uri).then(() => {
+  console.log("Connected to the database");
+});
+////END OF MONGOOSE TERRITORY
 
 //middleware to parse the request body
 app.use(express.json());
@@ -21,7 +33,7 @@ app.get("/", (req, res) => {
 
 //get the kanban boards for the user
 app.get("/api/boards", async (req, res) => {
-  const user = await User.findOne({ username: userName });
+  const user = await User.findOne({ username: activeUsername });
   const tasks = await Task.find({ user: user });
   res.send(tasks);
 });
@@ -38,7 +50,7 @@ app.post("/api/addTask", async (req, res) => {
     console.log("adding task\n", newTask);
 
     const user = await User.findOne({
-      username: userName,
+      username: activeUsername,
     });
 
     newTask.user = user;
@@ -93,19 +105,22 @@ app.put("/api/deleteTask", async (req, res) => {
     res.status(500).send({ message: "Error deleting task", e });
   }
 });
-
+//register the user
+app.post("/api/register", async (req, res) => {
+  const username = req.body.username;
+  const email = req.body.email;
+  const password = req.body.password;
+  try {
+    const newUser = await UserModel.registerUser(username, email, password);
+    console.log("User registered:\n",newUser);
+    res.send({ message: "User registered"});
+  } catch (e) {
+    res.status(500).send({ message: "Error registering user", e });
+  }
+});
 //start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
-////MONGOOSE TERRITORY
-const mongoose = require("mongoose");
-const uri = process.env.MONGODB_URI;
-const options = {
-  dbName: "kanban",
- 
-};
-mongoose.connect(uri).then(() => {
-  console.log("Connected to the database");
-});
+

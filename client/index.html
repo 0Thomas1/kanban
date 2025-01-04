@@ -17,7 +17,7 @@
     <!--Add task Modal -->
     <div
       class="modal fade"
-      id="staticBackdrop"
+      id="addTaskModal"
       data-bs-backdrop="static"
       data-bs-keyboard="false"
       tabindex="-1"
@@ -105,17 +105,17 @@
           <div class="modal-body">
             <form id="loginForm">
               <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
+                <label for="loginUsername" class="form-label">Username</label>
                 <input
                   type="text"
                   class="form-control"
-                  id="username"
+                  id="loginUsername"
                   aria-describedby="username"
                 />
               </div>
               <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" />
+                <label for="loginPassword" class="form-label">Password</label>
+                <input type="password" class="form-control" id="loginPassword" />
               </div>
               <button type="submit" class="btn btn-primary" id="login">
                 Login
@@ -160,17 +160,25 @@
           <div class="modal-body">
             <form id="registerForm">
               <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
+                <label for="regUsername" class="form-label">Username</label>
                 <input
                   type="text"
                   class="form-control"
-                  id="username"
+                  id="regUsername"
                   aria-describedby="username"
                 />
               </div>
               <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" />
+                <label for="regEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="regEmail" />
+              </div>
+              <div class="mb-3">
+                <label for="regPassword" class="form-label">Password</label>
+                <input type="password" class="form-control" id="regPassword" />
+              </div>
+              <div>
+                <label for="regConfirmPassword" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="regConfirmPassword" />
               </div>
               <button type="submit" class="btn btn-primary" id="register">
                 Register
