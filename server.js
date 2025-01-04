@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 const port = 3000;
 const root = require("path").join(__dirname, "client");
-const MongoDB = require("./utils/mongodb.js");
 const userName = "thomas";
 const User = require("./utils/User.js");
 const Task = require("./utils/Task.js");
@@ -13,8 +12,7 @@ app.use(express.json());
 //serve the static files
 app.use(express.static(root));
 
-//connect to the MongoDB database
-MongoDB.connectToMongoDB();
+
 
 //serve the index.html file
 app.get("/", (req, res) => {
@@ -104,4 +102,10 @@ app.listen(port, () => {
 ////MONGOOSE TERRITORY
 const mongoose = require("mongoose");
 const uri = process.env.MONGODB_URI;
-mongoose.connect(uri);
+const options = {
+  dbName: "kanban",
+ 
+};
+mongoose.connect(uri).then(() => {
+  console.log("Connected to the database");
+});
