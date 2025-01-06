@@ -12,9 +12,13 @@ const uri = process.env.MONGODB_URI;
 const options = {
   dbName: "kanban",
 };
-mongoose.connect(uri).then(() => {
-  console.log("Connected to the database");
-});
+
+//singleTon connection
+if(mongoose.connection.readyState === 0){ //if connection is not established
+  mongoose.connect(uri, options).then(() => {
+    console.log("Connected to the database");
+  });
+}
 ////END OF MONGOOSE TERRITORY
 
 //middleware to parse the request body
