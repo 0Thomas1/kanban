@@ -6,20 +6,28 @@ let activeUsername = "";
 const User = require("./utils/User.js");
 const Task = require("./utils/Task.js");
 const UserModel = require("./utils/UserModel.js");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const cookieJWTAuth = require("./utils/cookieJWTAuth.js");
 ////MONGOOSE TERRITORY
 const mongoose = require("mongoose");
+const exp = require("constants");
 const uri = process.env.MONGODB_URI;
 const options = {
   dbName: "kanban",
 };
 
 //singleTon connection
-if(mongoose.connection.readyState === 0){ //if connection is not established
+if (mongoose.connection.readyState === 0) {
+  //if connection is not established
   mongoose.connect(uri, options).then(() => {
     console.log("Connected to the database");
   });
 }
 ////END OF MONGOOSE TERRITORY
+
+//middleware to parse the cookies
+app.use(cookieParser());
 
 //middleware to parse the request body
 app.use(express.json());
@@ -33,14 +41,18 @@ app.get("/", (req, res) => {
 });
 
 //get the kanban boards for the user
-app.get("/api/boards", async (req, res) => {
-  const user = await User.findOne({ username: activeUsername });
-  const tasks = await Task.find({ user: user });
+app.get("/api/boards", cookieJWTAuth, async (req, res) => {
+  console.log(`Getting boards for 
+    {
+      uid: ${req.user.uid},
+      uname: ${req.user.username}
+    }`);
+  const tasks = await Task.find({ user: req.user.uid });
   res.send(tasks);
 });
 
 //add task to the kanban board
-app.post("/api/addTask", async (req, res) => {
+app.post("/api/addTask", cookieJWTAuth, async (req, res) => {
   const task = req.body;
   try {
     const newTask = await Task.create({
@@ -51,7 +63,7 @@ app.post("/api/addTask", async (req, res) => {
     console.log("adding task\n", newTask);
 
     const user = await User.findOne({
-      username: activeUsername,
+      username: req.user.username,
     });
 
     newTask.user = user;
@@ -66,12 +78,12 @@ app.post("/api/addTask", async (req, res) => {
 });
 
 //change the status of the task
-app.put("/api/changeTaskStatus", async (req, res) => {
+app.put("/api/changeTaskStatus", cookieJWTAuth, async (req, res) => {
   try {
     const taskId = req.body.taskId;
     const newStatus = req.body.newStatus;
     const task = await Task.findById(taskId);
-    if (task) {
+    if (task && task.user.username === req.user.username) {
       console.log("Changing status:\n", task);
 
       task.taskStatus = newStatus;
@@ -129,7 +141,9 @@ app.post("/api/login", async (req, res) => {
   }
   if (result.auth === true) {
     activeUsername = username;
-    res.status(200).send({message: result.message});
+
+    res.cookie("token", result.token, { httpOnly: true });
+    res.status(200).send({ message: result.message, username: username });
   }
 });
 

@@ -2,7 +2,6 @@
 let todo = document.getElementById("todo");
 let inProgress = document.getElementById("inProgress");
 let done = document.getElementById("done");
-let activeUsername;
 const taskForm = document.getElementById("taskForm");
 const regForm = document.getElementById("registerForm");
 const loginForm = document.getElementById("loginForm");
@@ -58,11 +57,11 @@ const displayBoards = async () => {
   todo.innerHTML = "";
   inProgress.innerHTML = "";
   done.innerHTML = "";
-  if (activeUsername) {
+ 
     const tasks = await fetch("/api/boards").then((res) => res.json());
 
     appendTask(tasks);
-  }
+ 
 };
 
 // Add a task to the board
@@ -206,9 +205,9 @@ regForm.addEventListener("submit", async (event) => {
   await registerUser();
 });
 
-function showWelcome() {
+function showWelcome(username) {
   document.getElementById("welcomeMessage").textContent =
-    "Welcome " + activeUsername + "!";
+    "Welcome " + username + "!";
   document.getElementById("loginBtn").style.display = "none";
   document.getElementById("logoutBtn").style.display = "Block";
 }
@@ -233,11 +232,11 @@ const loginUser = async function () {
     for (let input of loginForm.querySelectorAll("input")) {
       input.value = "";
     }
+    const data = await res.json();
+    console.log(data.username);
     loginModal.hide();
-    activeUsername = username;
-
     displayBoards();
-    showWelcome();
+    showWelcome(data.username);
   } else {
     const data = await res.json();
     console.log("Login failed");
@@ -264,7 +263,6 @@ document.getElementById("logout").addEventListener("click", async () => {
     document.getElementById("welcomeMessage").textContent = "";
     document.getElementById("loginBtn").style.display = "block";
     document.getElementById("logoutBtn").style.display = "none";
-    activeUsername = "";
     displayBoards();
   } else {
     console.log("Error logging out");
