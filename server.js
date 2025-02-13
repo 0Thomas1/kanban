@@ -83,7 +83,7 @@ app.put("/api/changeTaskStatus", cookieJWTAuth, async (req, res) => {
     const taskId = req.body.taskId;
     const newStatus = req.body.newStatus;
     const task = await Task.findById(taskId);
-    if (task && task.user.username === req.user.username) {
+    if (task) {
       console.log("Changing status:\n", task);
 
       task.taskStatus = newStatus;

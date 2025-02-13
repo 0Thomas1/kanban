@@ -244,7 +244,7 @@ const loginUser = async function () {
   }
 };
 
-// Logout the user
+// Login the user
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   await loginUser();
@@ -263,7 +263,9 @@ document.getElementById("logout").addEventListener("click", async () => {
     document.getElementById("welcomeMessage").textContent = "";
     document.getElementById("loginBtn").style.display = "block";
     document.getElementById("logoutBtn").style.display = "none";
-    displayBoards();
+    todo.innerHTML = "";
+    inProgress.innerHTML = "";
+    done.innerHTML = "";
   } else {
     console.log("Error logging out");
   }
