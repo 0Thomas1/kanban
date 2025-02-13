@@ -15,7 +15,10 @@ const taskSchema = new mongoose.Schema({
     ref: "User",
   },
 });
+//static method
 
+
+//private instance method
 taskSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
   next();
@@ -29,5 +32,12 @@ taskSchema.methods.removeSelf = async function () {
   );
   return this.deleteOne();
 };
+
+
+taskSchema.methods.changeStatus = async function (newStatus) {
+  this.taskStatus = newStatus;
+  return this.save();
+};
+
 
 module.exports = mongoose.model("Task", taskSchema);

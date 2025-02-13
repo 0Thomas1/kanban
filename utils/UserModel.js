@@ -1,7 +1,8 @@
 const User = require("./User");
 const bcrypt = require("bcrypt");
-const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 const saltRounds = 10;
+
 async function registerUser(username, email, password) {
   if (await User.exists({ username: username })) {
     throw new Error("Username already exists");
@@ -32,7 +33,17 @@ async function loginUser(username, password) {
   const result = await bcrypt.compare(password, user.password);
   if (result) {
     console.log("Login successful");
-    return { message: "Login successful", auth: true };
+    const uid = user._id;
+    console.log("uid", uid);
+    const token = jwt.sign(
+      { uid: uid, username: username },
+      process.env.MY_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
+
+    return { message: "Login successful", auth: true, token: token };
   } else {
     return { message: "Incorrect password", auth: false };
   }
